@@ -12,8 +12,9 @@ public class PlayerScript : MonoBehaviour
     public float speed;
     public float jumpHeight;
     
-    public float gravity = 9.8f;
+    public float gravity;
     public Vector3 velocity;
+    public float drag;
 
     [Header("GroundCheck")]
     public LayerMask groundLayer;
@@ -26,6 +27,7 @@ public class PlayerScript : MonoBehaviour
 
     void Update()
     {
+        velocity *= Mathf.Clamp01(1f - drag * Time.deltaTime);
         HandleMovement();
     }
 
@@ -42,7 +44,8 @@ public class PlayerScript : MonoBehaviour
 
         if(GroundCheck())
         {
-            velocity.y = 0f;
+            if(velocity.y < 0) velocity.y = 0f;
+            
         }
         if(Input.GetKeyDown(KeyCode.Space) && GroundCheck())
         {
@@ -59,12 +62,12 @@ public class PlayerScript : MonoBehaviour
         if(Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, rayLength, groundLayer))
         {
             
-            Debug.Log("Touched Ground");
+            //Debug.Log("Touched Ground");
             return true;
         }
         else
         {
-            Debug.Log("Didn't hit");
+           //Debug.Log("Didn't hit");
             return false;
         }
     }
