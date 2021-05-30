@@ -12,7 +12,9 @@ public class GunScript : MonoBehaviour
     public float gunRange;
     public float gunForce;
 
-    float timer = 0f;
+    public float fireRate;
+    private float nextFire;
+
     Vector3 forceTemp = Vector3.zero;
 
     void Start()
@@ -20,16 +22,14 @@ public class GunScript : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
-        Debug.DrawRay(gun.position, gun.forward * gunRange, Color.red);
+        Debug.DrawRay(cameraPos.position, cameraPos.forward * gunRange, Color.red);
 
-        // playerScript.velocity += forceTemp;
-
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) && Time.time > nextFire)
         {
             Shoot();
+            nextFire = Time.time + fireRate;
         }
 
         forceTemp = Vector3.Lerp(forceTemp, Vector3.zero, 1 * Time.deltaTime);
@@ -40,11 +40,11 @@ public class GunScript : MonoBehaviour
         RaycastHit hit;
         
 
-        if(Physics.Raycast(gun.position, gun.forward, out hit, gunRange, shotableLayer))
+        if(Physics.Raycast(cameraPos.position, cameraPos.forward, out hit, gunRange, shotableLayer))
         {
             Vector3 dir;
-            dir = gun.forward * gunForce;
-            playerScript.velocity = -dir;
+            dir = gun.forward * gunForce; //Calculates opposite direction of what player is facing
+            playerScript.velocity = -dir; //Applies above force to player
             Debug.Log("Shot");
         }
     }
