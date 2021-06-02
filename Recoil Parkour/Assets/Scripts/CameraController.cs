@@ -4,17 +4,22 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public PlayerScript playerScript;
     [Header("Camera")]
-    public float mouseSensitivity = 100f;
+    public float mouseSensitivity;
     public Transform playerBody;
     float xRotation = 0f;
 
     [Header("Object")]
     public Transform gunGO;
+    
+    [SerializeField]
+    private float tempSensitivity;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        tempSensitivity = mouseSensitivity;
     }
 
     // Update is called once per frame
@@ -29,5 +34,14 @@ public class CameraController : MonoBehaviour
         transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         gunGO.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         playerBody.Rotate(Vector3.up * mouseX);
+
+        if(playerScript.isSlowed)
+        {
+            mouseSensitivity = tempSensitivity * 2;
+            Debug.Log("Sensitivity Increased");
+        }
+        else
+            mouseSensitivity = tempSensitivity;
+            
     }
 }
